@@ -67,7 +67,7 @@ npm run package
 
 ## ⚙️ 配置
 
-在 VS Code 设置中搜索 `antigravity` 进行配置：
+在 VS Code 设置中搜索 `anti-tools` 进行配置：
 
 | 设置项 | 默认值 | 说明 |
 |--------|--------|------|
@@ -123,4 +123,4 @@ MIT License
 
 ---
 
-**Publisher**: F4CN2US
+**Publisher**: Felix2G
