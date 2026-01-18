@@ -1,0 +1,213 @@
+{
+    "name": "antigravity-auth-switch",
+    "displayName": "Anti Tools",
+    "description": "Anti Tools 账号切换与配额监控扩展 - 支持多账号管理、配额检查、低配额自动提示切换",
+    "version": "1.6.4",
+    "publisher": "F4CN2US",
+    "icon": "resources/icon.png",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "antigravity",
+        "account",
+        "quota",
+        "google",
+        "gemini",
+        "claude"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "antigravity.switchAccount",
+                "title": "切换账号",
+                "category": "Anti-tools"
+            },
+            {
+                "command": "antigravity.refreshQuota",
+                "title": "刷新配额",
+                "category": "Anti-tools"
+            },
+            {
+                "command": "antigravity.refreshAllQuotas",
+                "title": "刷新",
+                "category": "Anti-tools",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "antigravity.oauthLogin",
+                "title": "登录",
+                "category": "Anti-tools"
+            },
+            {
+                "command": "antigravity.showAccountDetails",
+                "title": "查看账号详情",
+                "category": "Anti-tools"
+            },
+            {
+                "command": "antigravity.bindDeviceProfile",
+                "title": "绑定设备指纹",
+                "category": "Anti-tools"
+            },
+            {
+                "command": "antigravity.openSettings",
+                "title": "设置",
+                "category": "Anti-tools",
+                "icon": "$(settings-gear)"
+            },
+            {
+                "command": "antigravity.exportAccount",
+                "title": "导出此账号",
+                "category": "Anti-tools",
+                "icon": "$(export)"
+            },
+            {
+                "command": "antigravity.exportAllAccounts",
+                "title": "导出",
+                "category": "Anti-tools",
+                "icon": "$(archive)"
+            },
+            {
+                "command": "antigravity.importAccounts",
+                "title": "导入",
+                "category": "Anti-tools",
+                "icon": "$(import)"
+            },
+            {
+                "command": "antigravity.deleteAccount",
+                "title": "删除账号",
+                "category": "Anti-tools",
+                "icon": "$(trash)"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "antigravity-sidebar",
+                    "title": "Anti Tools",
+                    "icon": "resources/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "antigravity-sidebar": [
+                {
+                    "id": "antigravity.accountsView",
+                    "name": "账号列表"
+                },
+                {
+                    "id": "antigravity.quotaView",
+                    "name": "配额概览"
+                },
+                {
+                    "id": "antigravity.operationsView",
+                    "name": "账号操作"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "antigravity.refreshAllQuotas",
+                    "when": "view == antigravity.accountsView",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "antigravity.switchAccount",
+                    "when": "view == antigravity.accountsView && viewItem == account",
+                    "group": "inline"
+                },
+                {
+                    "command": "antigravity.refreshQuota",
+                    "when": "view == antigravity.accountsView && viewItem == account",
+                    "group": "inline"
+                },
+                {
+                    "command": "antigravity.exportAccount",
+                    "when": "view == antigravity.accountsView && viewItem == account",
+                    "group": "1_account_ops"
+                },
+                {
+                    "command": "antigravity.deleteAccount",
+                    "when": "view == antigravity.accountsView && viewItem == account",
+                    "group": "2_danger"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Anti Tools",
+            "properties": {
+                "anti-tools.quotaThreshold": {
+                    "type": "number",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "配额低于此百分比时提示切换账号"
+                },
+                "anti-tools.autoCheckInterval": {
+                    "type": "number",
+                    "default": 60,
+                    "minimum": 30,
+                    "maximum": 3600,
+                    "description": "自动检查配额的间隔时间（秒），默认60秒"
+                },
+                "anti-tools.monitoredModels": {
+                    "type": "array",
+                    "default": [
+                        "claude-sonnet-4-5",
+                        "gemini-3-flash",
+                        "gemini-3-pro-high"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "需要监控配额的模型列表"
+                },
+                "anti-tools.enableAutoSwitch": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "配额低于阈值时是否自动切换到最佳账号"
+                },
+                "anti-tools.showStatusBarItem": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "是否在状态栏显示当前账号和配额"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "clean-vsix": "node -e \"const fs = require('fs'); fs.readdirSync('.').filter(f => f.endsWith('.vsix')).forEach(f => fs.unlinkSync(f));\"",
+        "package": "npm run clean-vsix && vsce package",
+        "publish": "vsce publish"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "@types/vscode": "^1.85.0",
+        "@typescript-eslint/eslint-plugin": "^6.13.0",
+        "@typescript-eslint/parser": "^6.13.0",
+        "eslint": "^8.54.0",
+        "typescript": "^5.3.0",
+        "@vscode/vsce": "^2.22.0"
+    },
+    "dependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/qiuguanfu/Anti-tools.git"
+    },
+    "license": "MIT"
+}
